@@ -33,7 +33,7 @@ draw_debug_ui = False
 player = Player(assets_dir)
 environment_tileset = Tileset(assets_dir + "tilemaps/tilemap_environment.png", 16, 16)
 map = LevelGenerator.generate_blank_map(32, 32, environment_tileset)
-camera = FollowCamera(player, back_buffer)
+camera = FollowCamera(player, back_buffer, pygame.Rect(0, 0, 512, 512))
 
 # game loop
 while True:
