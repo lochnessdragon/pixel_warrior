@@ -5,10 +5,12 @@ import random
 class Tilemap(pygame.sprite.Sprite):
     def __init__(self, tileset, width, height):
         super().__init__()
+        self.pos = pygame.Vector2(0, 0)
         self.tileset = tileset
         self.width = width
         self.height = height
         self.tiles = [[0 for i in range(width)] for j in range(height)] # allocate empty array to initalize later
+        self.solid_tiles = []
 
     def draw(self, surface, camera):
         for y in range(self.height):
@@ -30,3 +32,50 @@ class Tilemap(pygame.sprite.Sprite):
             raise ValueError("The provided y is out of bounds!")
 
         self.tiles[y][x] = id
+
+    def setSolid(self, solid_tiles_list):
+        self.solid_tiles = solid_tiles_list
+
+    """
+     getSolidTilesV:
+        returns rects for the solid tiles that are above and below a certain point(non-localized space)
+    """
+    def getSolidTilesV(self, x, y):
+        tile_rect = pygame.Rect(0, 0, self.tileset.tile_width, self.tileset.tile_height)
+        result = []
+        # convert x and y to a localized tile coordinate
+        localX = int(x - self.pos.x)
+        localY = int(y - self.pos.y)
+        localX = localX // self.tileset.tile_width
+        localY = localY // self.tileset.tile_width
+        for y in range(localY - 1, localY + 2, 2):
+            if(y < 0 or y > self.height): continue
+            for x in range(localX - 1, localX + 2):
+                if(x < 0 or x > self.width): continue
+                #print("Checking:", x, ",", y)
+                if self.getTile(x, y) in self.solid_tiles:
+                    # add tile rect to the result
+                    result.append(tile_rect.move((x * self.tileset.tile_width) + self.pos.x, (y * self.tileset.tile_height) + self.pos.y))
+        return result
+
+    """
+     getSolidTilesH:
+        returns the solid tiles that are left and right of a certain point(non-localized space)
+    """
+    def getSolidTilesH(self, x, y):
+        tile_rect = pygame.Rect(0, 0, self.tileset.tile_width, self.tileset.tile_height)
+        result = []
+        # convert x and y to a localized tile coordinate
+        localX = int(x - self.pos.x)
+        localY = int(y - self.pos.y)
+        localX = localX // self.tileset.tile_width
+        localY = localY // self.tileset.tile_width
+        for y in range(localY - 1, localY + 2):
+            if(y < 0 or y > self.height): continue
+            for x in range(localX - 1, localX + 2, 2):
+                if(x < 0 or x > self.width): continue
+                #print("Checking:", x, ",", y)
+                if self.getTile(x, y) in self.solid_tiles:
+                    # add tile rect to the result
+                    result.append(tile_rect.move((x * self.tileset.tile_width) + self.pos.x, (y * self.tileset.tile_height) + self.pos.y))
+        return result

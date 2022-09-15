@@ -31,8 +31,11 @@ draw_debug_ui = False
 
 # game objects
 player = Player(assets_dir)
+
+# list of all tile ids that are solid
+solid_tiles = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 22, 29, 30, 31, 54, 55, 56]
 environment_tileset = Tileset(assets_dir + "tilemaps/tilemap_environment.png", 16, 16)
-map = LevelGenerator.generate_blank_map(32, 32, environment_tileset)
+map = LevelGenerator.generate_blank_map(32, 32, environment_tileset, solid_tiles)
 camera = FollowCamera(player, back_buffer, pygame.Rect(0, 0, 512, 512))
 
 # game loop
@@ -56,7 +59,7 @@ while True:
                     draw_debug_ui = not draw_debug_ui
 
 
-        player.update(frameTime)
+        player.update(frameTime, map)
         camera.update(frameTime)
         custom_cursor.update()
 

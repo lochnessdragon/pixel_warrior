@@ -4,7 +4,7 @@ from pygame.locals import *
 from Tilemap import *
 import random
 
-def generate_blank_map(width, height, tileset):
+def generate_blank_map(width, height, tileset, solid_tiles):
     map = Tilemap(tileset, width, height)
     for y in range(height):
         for x in range(width):
@@ -30,5 +30,7 @@ def generate_blank_map(width, height, tileset):
     map.setTile(0, height - 1, 13)
     map.setTile(width - 1, 0, 3)
     map.setTile(width - 1, height - 1, 15)
+
+    map.setSolid(solid_tiles)
 
     return map
