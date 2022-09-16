@@ -4,7 +4,7 @@ from pygame.locals import *
 from Player import *
 from CustomCursor import *
 from Camera import *
-from Tileset import *
+from Spriteset import *
 from Tilemap import *
 import LevelGenerator
 
@@ -30,11 +30,12 @@ debug_font = pygame.freetype.Font(assets_dir + "ui/fonts/Kenney Pixel.ttf", size
 draw_debug_ui = False
 
 # game objects
-player = Player(assets_dir)
+wizard_spritesheet = Spriteset(assets_dir + "spritesheets/wizard.png", 16, 16)
+player = Player(wizard_spritesheet)
 
 # list of all tile ids that are solid
 solid_tiles = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 22, 29, 30, 31, 54, 55, 56]
-environment_tileset = Tileset(assets_dir + "tilemaps/tilemap_environment.png", 16, 16)
+environment_tileset = Spriteset(assets_dir + "tilemaps/tilemap_environment.png", 16, 16)
 map = LevelGenerator.generate_blank_map(32, 32, environment_tileset, solid_tiles)
 camera = FollowCamera(player, back_buffer, pygame.Rect(0, 0, 512, 512))
 

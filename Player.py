@@ -4,9 +4,9 @@ import math
 from utils import sign
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, assets_dir):
+    def __init__(self, sprite_sheet):
         super().__init__()
-        self.image = pygame.image.load(assets_dir + "Tiles/tile_0084.png").convert()
+        self.image = sprite_sheet.getSprite(0)
         self.rect = self.image.get_rect()
         self.rect.center = (100, 100)
         self.isFacingRight = True
@@ -45,7 +45,7 @@ class Player(pygame.sprite.Sprite):
         if collideIndex > -1:
             # the player collides with a rect on the y axis, avoid this!
             self.velocity[1] = 0
-            self.rect.centery = vTiles[collideIndex].centery + (tilemap.tileset.tile_height * (-1 if vTiles[collideIndex].centery > self.rect.centery else 1)) # this code would break if the player and the tiles were different sizes
+            self.rect.centery = vTiles[collideIndex].centery + (tilemap.tileset.sprite_height * (-1 if vTiles[collideIndex].centery > self.rect.centery else 1)) # this code would break if the player and the tiles were different sizes
 
 
         hTiles = tilemap.getSolidTilesH(self.rect.center[0], self.rect.center[1])
@@ -53,7 +53,7 @@ class Player(pygame.sprite.Sprite):
         if collideIndex > -1:
             # avoid the player moving on the x axis
             self.velocity[0] = 0
-            self.rect.centerx = vTiles[collideIndex].centerx + (tilemap.tileset.tile_height * (-1 if vTiles[collideIndex].centerx > self.rect.centerx else 1)) # this code would break if the player and the tiles were different sizes
+            self.rect.centerx = vTiles[collideIndex].centerx + (tilemap.tileset.sprite_width * (-1 if vTiles[collideIndex].centerx > self.rect.centerx else 1)) # this code would break if the player and the tiles were different sizes
 
         # apply velocity
         self.rect.move_ip(self.velocity[0] * frameTime, self.velocity[1] * frameTime)
