@@ -7,6 +7,7 @@ from Camera import *
 from Spriteset import *
 from Tilemap import *
 import LevelGenerator
+from AnimationStateMachine import *
 
 pygame.init()
 
@@ -31,7 +32,9 @@ draw_debug_ui = False
 
 # game objects
 wizard_spritesheet = Spriteset(assets_dir + "spritesheets/wizard.png", 16, 16)
-player = Player(wizard_spritesheet)
+idle_anim = Animation([0, 1], 1000)
+walk_anim = Animation(list(range(2, 7)), 150)
+player = Player(wizard_spritesheet, idle_anim)
 
 # list of all tile ids that are solid
 solid_tiles = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 22, 29, 30, 31, 54, 55, 56]

@@ -8,7 +8,7 @@ Spriteset:
 """
 class Spriteset():
     def __init__(self, spritesetName, sprite_width, sprite_height):
-        self.image = pygame.image.load(spritesetName).convert()
+        self.image = pygame.image.load(spritesetName).convert_alpha()
         self.width = self.image.get_width()
         self.height = self.image.get_height()
         self.sprite_width = sprite_width
