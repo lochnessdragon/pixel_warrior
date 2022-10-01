@@ -11,7 +11,10 @@ from AnimationStateMachine import *
 
 pygame.init()
 
+# define constants
 FPS = 60
+WHITE = (255, 255, 255)
+
 clock = pygame.time.Clock()
 assets_dir = os.path.dirname(__file__) + "/assets/"
 
@@ -32,8 +35,12 @@ draw_debug_ui = False
 
 # game objects
 wizard_spritesheet = Spriteset(assets_dir + "spritesheets/wizard.png", 16, 16)
-idle_anim = Animation([0, 1], 1000)
-walk_anim = Animation(list(range(2, 7)), 150)
+idle_anim = PlayerIdleAnimation([0, 1], 1000)
+walk_anim = PlayerWalkAnimation(list(range(2, 7)), 150)
+
+idle_anim.walk_anim = walk_anim
+walk_anim.idle_anim = idle_anim
+
 player = Player(wizard_spritesheet, idle_anim)
 
 # list of all tile ids that are solid
@@ -82,8 +89,9 @@ while True:
 
         # draw ui
         if draw_debug_ui:
-            debug_font.render_to(window, (0, 0), "Frame time: " + str(frameTime) + " ms", fgcolor = (255, 255, 255))
-            debug_font.render_to(window, (0, 10), "Camera: (" + str(camera.pos.x) + ", " + str(camera.pos.y) + ")", fgcolor = (255, 255, 255))
+            debug_font.render_to(window, (0, 0), "Frame time: " + str(frameTime) + " ms", fgcolor = WHITE)
+            debug_font.render_to(window, (0, 10), "Camera: (" + str(camera.pos.x) + ", " + str(camera.pos.y) + ")", fgcolor = WHITE)
+            debug_font.render_to(window, (0, 20), f"Player Vel: {player.velocity}", fgcolor = WHITE)
 
         # draw cursor last
         custom_cursor.draw(window)

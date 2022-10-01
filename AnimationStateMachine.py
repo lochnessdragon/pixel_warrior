@@ -6,7 +6,7 @@ class Animation:
         self.frames = frames
         self.speed = timeBetweenFrames
 
-    def update(self, frameTime):
+    def update(self, frameTime, entity):
         self.time += frameTime
 
         if(self.time >= self.speed):
@@ -19,3 +19,27 @@ class Animation:
             self.time = 0
 
         return self.frame
+
+class PlayerIdleAnimation(Animation):
+    def __init__(self, frames, timeBetweenFrames):
+        super().__init__(frames, timeBetweenFrames)
+        self.walk_anim = None
+
+    def update(self, frameTime, entity):
+        frame = super().update(frameTime, entity)
+        if abs(entity.velocity[0]) + abs(entity.velocity[1]) > 0.01:
+            #print("Walking!")
+            entity.animator = self.walk_anim
+        return frame
+
+class PlayerWalkAnimation(Animation):
+    def __init__(self, frames, timeBetweenFrames):
+        super().__init__(frames, timeBetweenFrames)
+        self.idle_anim = None
+
+    def update(self, frameTime, entity):
+        frame = super().update(frameTime, entity)
+        if abs(entity.velocity[0]) + abs(entity.velocity[1]) < 0.01:
+            entity.animator = self.idle_anim
+
+        return frame
