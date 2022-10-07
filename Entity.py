@@ -22,10 +22,6 @@ class Entity(pygame.sprite.Sprite):
     def update(self, frameTime, tilemap):
         reduced_frame_time = (frameTime / 25)
 
-        # cap entity's velocity
-        self.velocity[0] = max(min(self.velocity[0], self.maxSpeed), -self.maxSpeed)
-        self.velocity[1] = max(min(self.velocity[1], self.maxSpeed), -self.maxSpeed)
-
         # check if applying the velocity would make the player hit a wall
         vTiles = tilemap.getSolidTilesV(self.rect.center[0], self.rect.center[1])
         collideIndex = self.rect.move(0, self.velocity[1] * reduced_frame_time).collidelist(vTiles)
@@ -47,6 +43,10 @@ class Entity(pygame.sprite.Sprite):
 
         # update animation
         self.image = self.sprite_sheet.getSprite(self.animator.update(frameTime, self))
+
+        # cap entity's velocity
+        self.velocity[0] = max(min(self.velocity[0], self.maxSpeed), -self.maxSpeed)
+        self.velocity[1] = max(min(self.velocity[1], self.maxSpeed), -self.maxSpeed)
 
         # apply deceleration
         self.velocity[0] = sign(self.velocity[0]) * max((abs(self.velocity[0]) - (self.decelerationFactor * reduced_frame_time)), 0)
