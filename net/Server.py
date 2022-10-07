@@ -1,6 +1,7 @@
 import socket
 import threading
 
+
 def client_code(client):
     # try to recieve data
     print("Attempting to recieve the data!")
@@ -14,7 +15,9 @@ def client_code(client):
             return
         data.append(chunk)
         bytes_recieved = bytes_recieved + len(chunk)
-        print(f"Recieved another: {len(chunk)} bytes, bringing the total to: {bytes_recieved}")
+        print(
+            f"Recieved another: {len(chunk)} bytes, bringing the total to: {bytes_recieved}"
+        )
         # if the message is null terminated, that is the end
         print(chunk[-1])
         if chunk[-1] == 0:
@@ -36,17 +39,22 @@ def client_code(client):
                 client.close()
                 return
             data_sent += just_sent
-            print(f"Sent another: {just_sent} bytes ({data_sent / len(data) * 100}%)")
+            print(
+                f"Sent another: {just_sent} bytes ({data_sent / len(data) * 100}%)"
+            )
 
     print("Closing socket!")
 
     # close the socket
     client.close()
 
+
 class Server:
+
     def __init__(self, port, max_conn):
         self.port = port
         self.max_conn = max_conn
+        self.name = socket.gethostname()
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         # bind the socket to a public name on the required port socket.gethostname()
@@ -63,7 +71,7 @@ class Server:
 
         # do something with the client socket
         print("Client accepted, starting thread!")
-        client_thread = threading.Thread(target=client_code, args=(client,))
+        client_thread = threading.Thread(target=client_code, args=(client, ))
         client_thread.start()
         self.clients.append(client_thread)
 
@@ -72,11 +80,12 @@ class Server:
             thread.join()
         self._socket.close()
 
+
 if __name__ == '__main__':
     print("Setting up echo server...")
     host = Server(5476, 5)
 
-    print(f"Listening on localhost:{host.port}")
+    print(f"Listening on {host.name}:{host.port}")
 
     while True:
         host.update()
