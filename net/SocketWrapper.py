@@ -10,9 +10,6 @@ class SocketWrapper():
         else:
             self._socket = sock
 
-    def connect(self, host, port):
-        self._socket.connect((host, port))
-
     def write(self, msg):
         total_bytes = 0
         while total_bytes < len(msg):
@@ -38,3 +35,22 @@ class SocketWrapper():
                 break
 
         data = b''.join(data)
+
+class ClientSocket(SocketWrapper):
+    def __init__(self, sock=None):
+        super().__init__(sock)
+
+    def connect(self, host, port):
+        self._socket.connect((host, port))
+
+class ServerSocket(SocketWrapper):
+    def __init__(self, sock=None, hostname=None, port=None, max_conn=None):
+        super().__init__(sock)
+
+        if sock is None and hostname is not None and port is not None:
+            self._socket.bind((hostname, port))
+            self.hostname = hostname
+            self.port = port
+
+        if max_conn is not None:
+            self._socket.listen(max_conn)
