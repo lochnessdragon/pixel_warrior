@@ -8,6 +8,7 @@ from Spriteset import *
 from Tilemap import *
 import LevelGenerator
 from AnimationStateMachine import *
+from NPatchDrawing import *
 
 pygame.init()
 
@@ -41,7 +42,10 @@ walk_anim = PlayerWalkAnimation(list(range(2, 7)), 150)
 idle_anim.walk_anim = walk_anim
 walk_anim.idle_anim = idle_anim
 
-player = Player(wizard_spritesheet, idle_anim)
+player = Player(wizard_spritesheet, idle_anim, 20)
+
+# create ui elements
+testWin = NPatchWindow(assets_dir + "ui/window_npatch.png", 3)
 
 # list of all tile ids that are solid
 solid_tiles = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 22, 29, 30, 31, 54, 55, 56]
@@ -84,6 +88,7 @@ while True:
 
         # players/sprites
         player.draw(back_buffer, camera)
+        testWin.draw(back_buffer, pygame.Rect(100, 100, 200, 100))
 
         pygame.transform.scale(back_buffer, (window.get_width(), window.get_height()), window)
 
