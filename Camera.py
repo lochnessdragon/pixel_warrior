@@ -1,11 +1,12 @@
 import pygame
 from pygame.locals import *
+from Entity import Entity
 
 class FollowCamera:
-    def __init__(self, followObj, view, bounds):
+    def __init__(self, followObj: Entity, window, bounds):
         self.pos = pygame.Vector2(0, 0)
-        self.view_center = pygame.Vector2(view.get_width() // 2, view.get_height() // 2)
-        self.view_size = pygame.Vector2(view.get_width(), view.get_height())
+        self.view_center = pygame.Vector2(window.size[0] // 2, window.size[1] // 2)
+        self.view_size = pygame.Vector2(window.size[0], window.size[1])
         self.follow = followObj
 
         self.bounds = bounds

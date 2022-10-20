@@ -1,6 +1,7 @@
 import sys, os
 import pygame
 from pygame.locals import *
+import pygame._sdl2.video
 from Player import *
 from CustomCursor import *
 from Camera import *
@@ -15,27 +16,25 @@ pygame.init()
 # define constants
 FPS = 60
 WHITE = (255, 255, 255)
+BG = (118, 59, 54, 255)
 
 clock = pygame.time.Clock()
 assets_dir = os.path.dirname(__file__) + "/assets/"
 
 # set up surface
-window = pygame.display.set_mode((600, 400), RESIZABLE, vsync = True)
-back_buffer = pygame.surface.Surface((window.get_width() / 2, window.get_height() / 2))
+window = pygame._sdl2.video.Window("Pixel Warrior", (640, 480))
+window.resizable = True
+renderer = pygame._sdl2.video.Renderer(window, accelerated = 1, vsync = True)
 
 # light blue background
-BG = (118, 59, 54)
-window.fill(BG)
-pygame.display.set_caption("Pixel Warrior")
-pygame.mouse.set_visible(False)
-custom_cursor = CustomCursor(assets_dir + "ui/cursor.png")
+custom_cursor = CustomCursor(renderer, assets_dir + "ui/cursor.png")
 
 # load fonts
 debug_font = pygame.freetype.Font(assets_dir + "ui/fonts/Kenney Pixel.ttf", size=20)
 draw_debug_ui = False
 
 # game objects
-wizard_spritesheet = Spriteset(assets_dir + "spritesheets/wizard.png", 16, 16)
+wizard_spritesheet = Spriteset(renderer, assets_dir + "spritesheets/wizard.png", 16, 16)
 idle_anim = PlayerIdleAnimation([0, 1], 1000)
 walk_anim = PlayerWalkAnimation(list(range(2, 7)), 150)
 
@@ -45,13 +44,13 @@ walk_anim.idle_anim = idle_anim
 player = Player(wizard_spritesheet, idle_anim, 20)
 
 # create ui elements
-testWin = NPatchWindow(assets_dir + "ui/window_npatch.png", 3)
+testWin = NPatchWindow(renderer, assets_dir + "ui/window_npatch.png", 3)
 
 # list of all tile ids that are solid
 solid_tiles = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 22, 29, 30, 31, 54, 55, 56]
-environment_tileset = Spriteset(assets_dir + "tilemaps/tilemap_environment.png", 16, 16)
+environment_tileset = Spriteset(renderer, assets_dir + "tilemaps/tilemap_environment.png", 16, 16)
 map = LevelGenerator.generate_blank_map(32, 32, environment_tileset, solid_tiles)
-camera = FollowCamera(player, back_buffer, pygame.Rect(0, 0, 512, 512))
+camera = FollowCamera(player, window, pygame.Rect(0, 0, 512, 512))
 
 # game loop
 while True:
@@ -64,10 +63,10 @@ while True:
                 sys.exit()
             if event.type == WINDOWRESIZED or event.type == WINDOWSIZECHANGED:
                 # resize smaller buffer
-                back_buffer = pygame.Surface((event.x // 2, event.y // 2))
-                camera.resize(back_buffer.get_width(), back_buffer.get_height())
+                camera.resize(window.size[0], window.size[1])
             if event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
+                    window.destroy()
                     pygame.quit()
                     sys.exit()
                 if event.key == K_x:
@@ -79,27 +78,27 @@ while True:
         custom_cursor.update()
 
         # render
-        back_buffer.fill(BG)
+        renderer.draw_color = BG
+        renderer.clear()
+        
         # render layers
         # background
-        map.draw(back_buffer, camera)
+        map.draw(camera)
 
         # foreground
 
         # players/sprites
-        player.draw(back_buffer, camera)
-        testWin.draw(back_buffer, pygame.Rect(100, 100, 200, 100))
-
-        pygame.transform.scale(back_buffer, (window.get_width(), window.get_height()), window)
+        player.draw(camera)
+        testWin.draw(pygame.Rect(100, 100, 200, 100))
 
         # draw ui
         if draw_debug_ui:
-            debug_font.render_to(window, (0, 0), "Frame time: " + str(frameTime) + " ms", fgcolor = WHITE)
-            debug_font.render_to(window, (0, 10), "Camera: (" + str(camera.pos.x) + ", " + str(camera.pos.y) + ")", fgcolor = WHITE)
-            debug_font.render_to(window, (0, 20), f"Player Vel: {player.velocity}", fgcolor = WHITE)
+            debug_font.render_to(None, (0, 0), "Frame time: " + str(frameTime) + " ms", fgcolor = WHITE)
+            debug_font.render_to(None, (0, 10), "Camera: (" + str(camera.pos.x) + ", " + str(camera.pos.y) + ")", fgcolor = WHITE)
+            debug_font.render_to(None, (0, 20), f"Player Vel: {player.velocity}", fgcolor = WHITE)
 
         # draw cursor last
-        custom_cursor.draw(window)
+        custom_cursor.draw()
 
         # display
-        pygame.display.update()
+        renderer.present()

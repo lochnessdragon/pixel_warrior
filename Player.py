@@ -16,12 +16,12 @@ class Player(Entity):
         pressed_keys = pygame.key.get_pressed()
         if pressed_keys[K_LEFT]:
             self.velocity[0] -= self.speed * reduced_frame_time
-            if self.isFacingRight:
-                self.isFacingRight = False
+            if not self.isFacingLeft:
+                self.isFacingLeft = True
         if pressed_keys[K_RIGHT]:
             self.velocity[0] += self.speed * reduced_frame_time
-            if not self.isFacingRight:
-                self.isFacingRight = True
+            if self.isFacingLeft:
+                self.isFacingLeft = False
         if pressed_keys[K_UP]:
             self.velocity[1] -= self.speed * reduced_frame_time
         if pressed_keys[K_DOWN]:
